@@ -25,8 +25,11 @@ const removeContact = function (contactId) {
   // ...твой код
   fs.readFile(contactsPath)
     .then((data) => JSON.parse(data))
-    .then((data) => data.filter((item) => Number(item.id) !== contactId))
-    .then((data) => console.table(data))
+    .then((data) => {
+      const newData = data.filter((item) => Number(item.id) !== contactId);
+      fs.writeFile(contactsPath, JSON.stringify(newData));
+      return listContacts();
+    })
     .catch((err) => console.log(err.message));
 };
 
@@ -48,9 +51,9 @@ const addContact = function (name, email, phone) {
           )}-${strPhone.slice(6)}`,
         },
       ];
-      return fs.writeFile(contactsPath, JSON.stringify(newData));
+      fs.writeFile(contactsPath, JSON.stringify(newData));
+      return listContacts();
     })
-    .then((data) => console.table(data))
     .catch((err) => console.log(err.message));
 };
 
